@@ -10,7 +10,7 @@ namespace QuizService.Filters;
 
 public class ValidateModelAttribute : ActionFilterAttribute
 {
-    public override void OnResultExecuting(ResultExecutingContext context)
+    public override void OnActionExecuting(ActionExecutingContext context)
     {
         if (!context.ModelState.IsValid)
         {
