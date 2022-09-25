@@ -2,7 +2,10 @@
 using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using QuizService.Application.Features.Answers.Commands;
+using QuizService.Application.Features.Answers.Queries;
 using QuizService.Application.Features.Questions.Commands;
+using QuizService.Application.Features.Questions.Queries;
 using QuizService.Application.Features.Quizzes.Commands;
 using QuizService.Application.Features.Quizzes.Queries;
 using QuizService.Contracts.Answers.Request;
@@ -46,34 +49,32 @@ public class QuizController : BaseController
 
     // GET api/quizzes/5
     [HttpGet("{id}")]
-    public object Get(int id)
+    public async Task<IActionResult> Get(int id)
     {
-        const string quizSql = "SELECT * FROM Quiz WHERE Id = @Id;";
-        var quiz = _connection.QuerySingle<Quiz>(quizSql, new { Id = id });
-        if (quiz == null)
-            return NotFound();
-        const string questionsSql = "SELECT * FROM Question WHERE QuizId = @QuizId;";
-        var questions = _connection.Query<Question>(questionsSql, new { QuizId = id });
-        const string answersSql = "SELECT a.Id, a.Text, a.QuestionId FROM Answer a INNER JOIN Question q ON a.QuestionId = q.Id WHERE q.QuizId = @QuizId;";
-        var answers = _connection.Query<Answer>(answersSql, new { QuizId = id })
-            .Aggregate(new Dictionary<int, IList<Answer>>(), (dict, answer) =>
-            {
-                if (!dict.ContainsKey(answer.QuestionId))
-                    dict.Add(answer.QuestionId, new List<Answer>());
-                dict[answer.QuestionId].Add(answer);
-                return dict;
-            });
+        var quizResult = await _mediator
+            .Send(new GetQuizByIdQuery { Id = id });
 
-        return new QuizResponse
+        if (quizResult.IsError) return HandleErrorResponse(quizResult.StatusCode, quizResult.ErrorMessage);
+
+        var questionsResult = await _mediator
+            .Send(new GetQuestionsByQuizIdQuery { QuizId = id });
+
+        if (questionsResult.Value.Count is 0)
+            return Ok(quizResult.Value);
+
+        var asnwersResult = await _mediator
+            .Send(new GetAnswersByQuizIdQuery { QuizId = id });
+
+        var quiz =  new QuizResponse
         {
-            Id = quiz.Id,
-            Title = quiz.Title,
-            Questions = questions.Select(question => new QuestionResponse
+            Id = quizResult.Value.Id,
+            Title = quizResult.Value.Title,
+            Questions = questionsResult.Value.Select(question => new QuestionResponse
             {
                 Id = question.Id,
                 Text = question.Text,
-                Answers = answers.ContainsKey(question.Id)
-                    ? answers[question.Id].Select(answer => new AnswerResponse
+                Answers = asnwersResult.Value.ContainsKey(question.Id)
+                    ? asnwersResult.Value[question.Id].Select(answer => new AnswerResponse
                     {
                         Id = answer.Id,
                         Text = answer.Text
@@ -87,6 +88,8 @@ public class QuizController : BaseController
                 {"questions", $"/api/quizzes/{id}/questions"}
             }
         };
+
+        return Ok(quiz);
     }
 
     // POST api/quizzes
@@ -166,31 +169,38 @@ public class QuizController : BaseController
     // POST api/quizzes/5/questions/6/answers
     [HttpPost]
     [Route("{id}/questions/{qid}/answers")]
-    public IActionResult PostAnswer(int id, int qid, [FromBody] AnswerCreateRequest value)
+    public async Task<IActionResult> PostAnswer(int id, int qid, [FromBody] AnswerCreateRequest value)
     {
-        const string sql = "INSERT INTO Answer (Text, QuestionId) VALUES(@Text, @QuestionId); SELECT LAST_INSERT_ROWID();";
-        var answerId = _connection.ExecuteScalar(sql, new { Text = value.Text, QuestionId = qid });
-        return Created($"/api/quizzes/{id}/questions/{qid}/answers/{answerId}", null);
+        var result = await _mediator
+            .Send(new CreateAnswerCommand { QuestionId = qid, Text = value.Text });
+
+        return result.IsError
+            ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
+            : Created($"/api/quizzes/{id}/questions/{qid}/answers/{result.Value}", null);
     }
 
     // PUT api/quizzes/5/questions/6/answers/7
     [HttpPut("{id}/questions/{qid}/answers/{aid}")]
-    public IActionResult PutAnswer(int id, int qid, int aid, [FromBody] AnswerUpdateRequest value)
+    public async Task<IActionResult> PutAnswer(int id, int qid, int aid, [FromBody] AnswerUpdateRequest value)
     {
-        const string sql = "UPDATE Answer SET Text = @Text WHERE Id = @AnswerId";
-        int rowsUpdated = _connection.Execute(sql, new { AnswerId = qid, Text = value.Text });
-        if (rowsUpdated == 0)
-            return NotFound();
-        return NoContent();
+        var result = await _mediator
+            .Send(new UpdateAnswerCommand { AnswerId = aid, Text = value.Text });
+
+        return result.IsError
+            ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
+            : NoContent();
     }
 
     // DELETE api/quizzes/5/questions/6/answers/7
     [HttpDelete]
     [Route("{id}/questions/{qid}/answers/{aid}")]
-    public IActionResult DeleteAnswer(int id, int qid, int aid)
+    public async Task<IActionResult> DeleteAnswer(int id, int qid, int aid)
     {
-        const string sql = "DELETE FROM Answer WHERE Id = @AnswerId";
-        _connection.ExecuteScalar(sql, new { AnswerId = aid });
-        return NoContent();
+        var result = await _mediator
+             .Send(new DeleteAnswerCommand { AnswerId = aid });
+
+        return result.IsError
+            ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
+            : NoContent();
     }
 }
