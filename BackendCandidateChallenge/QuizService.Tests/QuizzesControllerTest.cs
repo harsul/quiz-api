@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json;
+using QuizService.Contracts.Questions.Request;
+using QuizService.Contracts.Quizzes.Responses;
 using QuizService.Model;
 using Xunit;
 
@@ -18,7 +20,7 @@ public class QuizzesControllerTest
     [Fact]
     public async Task PostNewQuizAddsQuiz()
     {
-        var quiz = new QuizCreateModel("Test title");
+        var quiz = new QuizCreateRequest {Title = "Test title" };
         using (var testHost = new TestServer(new WebHostBuilder()
                    .UseStartup<Startup>()))
         {
@@ -43,7 +45,7 @@ public class QuizzesControllerTest
             var response = await client.GetAsync(new Uri(testHost.BaseAddress, $"{QuizApiEndPoint}{quizId}"));
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Content);
-            var quiz = JsonConvert.DeserializeObject<QuizResponseModel>(await response.Content.ReadAsStringAsync());
+            var quiz = JsonConvert.DeserializeObject<QuizResponse>(await response.Content.ReadAsStringAsync());
             Assert.Equal(quizId, quiz.Id);
             Assert.Equal("My first quiz", quiz.Title);
         }
@@ -73,7 +75,7 @@ public class QuizzesControllerTest
         {
             var client = testHost.CreateClient();
             const long quizId = 999;
-            var question = new QuestionCreateModel("The answer to everything is what?");
+            var question = new QuestionCreateRequest{Text = "The answer to everything is what?"};
             var content = new StringContent(JsonConvert.SerializeObject(question));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             var response = await client.PostAsync(new Uri(testHost.BaseAddress, $"{QuizApiEndPoint}"),content);
