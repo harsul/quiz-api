@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using QuizService.Application.Features.Quizzes.Queries;
+using QuizService.Filters;
 using QuizService.Infrastructure;
 
 namespace QuizService;
@@ -24,10 +25,13 @@ public class Startup
         services.AddMvc();
         services.AddSingleton(AppDbContext.InitializeDb());
 
+        services.AddControllers(config =>
+        {
+            config.Filters.Add(typeof(ApplicationExceptionHandler));
+        });
+
         services.AddMediatR(typeof(GetAllQuizzesQuery));
         services.AddAutoMapper(typeof(Program));
-
-        services.AddControllers();
 
         services.AddSwaggerGen();
     }

@@ -12,6 +12,7 @@ using QuizService.Contracts.Answers.Responses;
 using QuizService.Contracts.Questions.Request;
 using QuizService.Contracts.Questions.Responses;
 using QuizService.Contracts.Quizzes.Responses;
+using QuizService.Filters;
 using QuizService.Model;
 using System;
 using System.Collections.Generic;
@@ -92,6 +93,7 @@ public class QuizController : BaseController
 
     // POST api/quizzes
     [HttpPost]
+    [ValidateModel]
     public async Task<IActionResult> Post([FromBody] QuizCreateRequest value)
     {
         var result = await _mediator
@@ -104,6 +106,7 @@ public class QuizController : BaseController
 
     // PUT api/quizzes/5
     [HttpPut("{id}")]
+    [ValidateModel]
     public async Task<IActionResult> Put(int id, [FromBody] QuizUpdateRequest value)
     {
         var result = await _mediator
@@ -129,6 +132,7 @@ public class QuizController : BaseController
     // POST api/quizzes/5/questions
     [HttpPost]
     [Route("{id}/questions")]
+    [ValidateModel]
     public async Task<IActionResult> PostQuestion(int id, [FromBody] QuestionCreateRequest value)
     {
         var result = await _mediator
@@ -141,6 +145,7 @@ public class QuizController : BaseController
 
     // PUT api/quizzes/5/questions/6
     [HttpPut("{id}/questions/{qid}")]
+    [ValidateModel]
     public async Task<IActionResult> PutQuestion(int id, int qid, [FromBody] QuestionUpdateRequest value)
     {
         var result = await _mediator
@@ -167,6 +172,7 @@ public class QuizController : BaseController
     // POST api/quizzes/5/questions/6/answers
     [HttpPost]
     [Route("{id}/questions/{qid}/answers")]
+    [ValidateModel]
     public async Task<IActionResult> PostAnswer(int id, int qid, [FromBody] AnswerCreateRequest value)
     {
         var result = await _mediator
@@ -179,6 +185,7 @@ public class QuizController : BaseController
 
     // PUT api/quizzes/5/questions/6/answers/7
     [HttpPut("{id}/questions/{qid}/answers/{aid}")]
+    [ValidateModel]
     public async Task<IActionResult> PutAnswer(int id, int qid, int aid, [FromBody] AnswerUpdateRequest value)
     {
         var result = await _mediator
