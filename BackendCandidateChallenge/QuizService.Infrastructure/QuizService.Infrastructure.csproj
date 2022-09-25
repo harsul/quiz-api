@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Microsoft.Data.Sqlite" />
+    <None Remove="Migrations\001-CreateTables.sql" />
+    <None Remove="Migrations\002-InsertSeedData.sql" />
+    <None Remove="Migrations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\001-CreateTables.sql" />
+    <EmbeddedResource Include="Migrations\002-InsertSeedData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+</Project>

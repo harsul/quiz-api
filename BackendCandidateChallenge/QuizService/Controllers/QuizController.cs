@@ -3,8 +3,8 @@ using System.Data;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using QuizService.Model;
-using QuizService.Model.Domain;
 using System.Linq;
+using QuizService.Domain.Models;
 
 namespace QuizService.Controllers;
 
