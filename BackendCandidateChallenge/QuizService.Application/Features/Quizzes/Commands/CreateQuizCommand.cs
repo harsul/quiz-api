@@ -5,7 +5,7 @@ using QuizService.Domain.Models;
 
 namespace QuizService.Application.Features.Quizzes.Commands
 {
-    public class CreateQuizCommand : IRequest<OperationResult<Quiz>>
+    public class CreateQuizCommand : IRequest<OperationResult<int>>
     {
         public string Title { get; set; }
     }

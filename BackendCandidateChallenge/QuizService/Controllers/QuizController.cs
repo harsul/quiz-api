@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using QuizService.Application.Features.Answers.Commands;
@@ -13,7 +12,6 @@ using QuizService.Contracts.Answers.Responses;
 using QuizService.Contracts.Questions.Request;
 using QuizService.Contracts.Questions.Responses;
 using QuizService.Contracts.Quizzes.Responses;
-using QuizService.Domain.Models;
 using QuizService.Model;
 using System;
 using System.Collections.Generic;
@@ -101,7 +99,7 @@ public class QuizController : BaseController
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
-            : CreatedAtAction(nameof(Get), new { id = result.Value.Id }, null);
+            : CreatedAtAction(nameof(Get), new { id = result.Value }, null);
     }
 
     // PUT api/quizzes/5
