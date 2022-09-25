@@ -2,6 +2,7 @@
 using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using QuizService.Application.Features.Questions.Commands;
 using QuizService.Application.Features.Quizzes.Commands;
 using QuizService.Application.Features.Quizzes.Queries;
 using QuizService.Contracts.Answers.Request;
@@ -127,32 +128,39 @@ public class QuizController : BaseController
     // POST api/quizzes/5/questions
     [HttpPost]
     [Route("{id}/questions")]
-    public IActionResult PostQuestion(int id, [FromBody] QuestionCreateRequest value)
+    public async Task<IActionResult> PostQuestion(int id, [FromBody] QuestionCreateRequest value)
     {
-        const string sql = "INSERT INTO Question (Text, QuizId) VALUES(@Text, @QuizId); SELECT LAST_INSERT_ROWID();";
-        var questionId = _connection.ExecuteScalar(sql, new { Text = value.Text, QuizId = id });
-        return Created($"/api/quizzes/{id}/questions/{questionId}", null);
+        var result = await _mediator
+            .Send(new CreateQuestionCommand { QuizId = id, Text = value.Text });
+
+        return result.IsError
+            ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
+            : Created($"/api/quizzes/{id}/questions/{result.Value}", null);
     }
 
     // PUT api/quizzes/5/questions/6
     [HttpPut("{id}/questions/{qid}")]
-    public IActionResult PutQuestion(int id, int qid, [FromBody] QuestionUpdateRequest value)
+    public async Task<IActionResult> PutQuestion(int id, int qid, [FromBody] QuestionUpdateRequest value)
     {
-        const string sql = "UPDATE Question SET Text = @Text, CorrectAnswerId = @CorrectAnswerId WHERE Id = @QuestionId";
-        int rowsUpdated = _connection.Execute(sql, new { QuestionId = qid, Text = value.Text, CorrectAnswerId = value.CorrectAnswerId });
-        if (rowsUpdated == 0)
-            return NotFound();
-        return NoContent();
+        var result = await _mediator
+            .Send(new UpdateQuestionCommand { QuestionId = qid, Text = value.Text, CorrectAnswerId = value.CorrectAnswerId });
+
+        return result.IsError
+            ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
+            : NoContent();
     }
 
     // DELETE api/quizzes/5/questions/6
     [HttpDelete]
     [Route("{id}/questions/{qid}")]
-    public IActionResult DeleteQuestion(int id, int qid)
+    public async Task<IActionResult> DeleteQuestion(int id, int qid)
     {
-        const string sql = "DELETE FROM Question WHERE Id = @QuestionId";
-        _connection.ExecuteScalar(sql, new { QuestionId = qid });
-        return NoContent();
+        var result = await _mediator
+            .Send(new DeleteQuestionCommand { QuestionId = qid });
+
+        return result.IsError
+            ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
+            : NoContent();
     }
 
     // POST api/quizzes/5/questions/6/answers

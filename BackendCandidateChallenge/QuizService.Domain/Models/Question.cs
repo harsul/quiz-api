@@ -15,13 +15,12 @@ public class Question
     {
     }
 
-    public static Question CreateQuestion(int quizId, string text, int correctAnswerId)
+    public static Question CreateQuestion(int quizId, string text)
     {
         var objectToValidate = new Question
         {
             QuizId = quizId,
             Text = text,
-            CorrectAnswerId = correctAnswerId
         };
 
         var validationResult = new QuestionValidator().Validate(objectToValidate);
@@ -35,4 +34,3 @@ public class Question
         throw exception;
     }
 }
-
