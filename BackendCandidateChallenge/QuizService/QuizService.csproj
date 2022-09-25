@@ -17,4 +17,8 @@
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Migrations\001-CreateTables.sql" />
+    <None Remove="Migrations\002-InsertSeedData.sql" />
+  </ItemGroup>
 </Project>
