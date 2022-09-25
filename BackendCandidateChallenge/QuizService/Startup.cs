@@ -28,6 +28,8 @@ public class Startup
         services.AddAutoMapper(typeof(Program));
 
         services.AddControllers();
+
+        services.AddSwaggerGen();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,6 +38,9 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
         app.UseRouting();
         app.UseEndpoints(endpoints => endpoints.MapControllers());

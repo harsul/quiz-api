@@ -10,6 +10,7 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,5 +27,10 @@
   <ItemGroup>
     <None Remove="Migrations\001-CreateTables.sql" />
     <None Remove="Migrations\002-InsertSeedData.sql" />
+    <None Remove="Contracts\Common\" />
+    <None Remove="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Contracts\Common\" />
   </ItemGroup>
 </Project>
