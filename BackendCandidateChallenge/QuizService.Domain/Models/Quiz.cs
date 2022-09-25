@@ -13,6 +13,12 @@ public class Quiz
     {
     }
 
+    public Quiz(int id, string title)
+    {
+        Id = id;
+        Title = title;
+    }
+
     public static Quiz CreateQuiz(string title)
     {
         var objectToValidate = new Quiz
