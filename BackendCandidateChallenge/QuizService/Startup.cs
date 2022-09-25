@@ -1,13 +1,10 @@
-﻿using System.Data;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using QuizService.Application.Features.Quizzes.Queries;
 using QuizService.Infrastructure;
 
 namespace QuizService;
@@ -26,6 +23,10 @@ public class Startup
     {
         services.AddMvc();
         services.AddSingleton(AppDbContext.InitializeDb());
+
+        services.AddMediatR(typeof(GetAllQuizzesQuery));
+        services.AddAutoMapper(typeof(Program));
+
         services.AddControllers();
     }
 
@@ -37,9 +38,6 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
         app.UseRouting();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }
