@@ -1,6 +1,6 @@
 namespace QuizService.Model;
 
-public class QuizUpdateModel
+public class QuizCreateRequest
 {
     public string Title { get; set; }
 }

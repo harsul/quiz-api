@@ -1,6 +1,6 @@
-namespace QuizService.Model;
+namespace QuizService.Contracts.Questions.Request;
 
-public class QuestionUpdateModel
+public class QuestionUpdateRequest
 {
     public string Text { get; set; }
     public int CorrectAnswerId { get; set; }
