@@ -10,11 +10,11 @@ using QuizService.Domain.Models;
 
 namespace QuizService.Application.Features.Questions.CommandHandlers;
 
-public class DeleteQUestionCommandHandler : IRequestHandler<DeleteQuestionCommand, OperationResult<Question>>
+public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionCommand, OperationResult<Question>>
 {
     private readonly IDbConnection _connection;
 
-    public DeleteQUestionCommandHandler(IDbConnection connection)
+    public DeleteQuestionCommandHandler(IDbConnection connection)
     {
         _connection = connection;
     }
@@ -42,5 +42,3 @@ public class DeleteQUestionCommandHandler : IRequestHandler<DeleteQuestionComman
         return result;
     }
 }
-
-
