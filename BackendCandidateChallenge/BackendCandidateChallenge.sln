@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizClient", "QuizClient\Qu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuizClient.Tests", "QuizClient.Tests\QuizClient.Tests.csproj", "{A1746465-9494-46CC-AB14-EB6AB15F446D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizService.Domain", "QuizService.Domain\QuizService.Domain.csproj", "{6C27B03D-BD59-4FCD-AE59-7AC1856D10F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizService.Infrastructure", "QuizService.Infrastructure\QuizService.Infrastructure.csproj", "{22F59440-97C7-41AC-914C-AA7468F56D3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizService.Application", "QuizService.Application\QuizService.Application.csproj", "{D3FF1C2A-D532-446E-8502-DEC3980926F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +39,18 @@ Global
 		{A1746465-9494-46CC-AB14-EB6AB15F446D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1746465-9494-46CC-AB14-EB6AB15F446D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1746465-9494-46CC-AB14-EB6AB15F446D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C27B03D-BD59-4FCD-AE59-7AC1856D10F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C27B03D-BD59-4FCD-AE59-7AC1856D10F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C27B03D-BD59-4FCD-AE59-7AC1856D10F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C27B03D-BD59-4FCD-AE59-7AC1856D10F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22F59440-97C7-41AC-914C-AA7468F56D3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22F59440-97C7-41AC-914C-AA7468F56D3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22F59440-97C7-41AC-914C-AA7468F56D3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22F59440-97C7-41AC-914C-AA7468F56D3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3FF1C2A-D532-446E-8502-DEC3980926F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3FF1C2A-D532-446E-8502-DEC3980926F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3FF1C2A-D532-446E-8502-DEC3980926F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3FF1C2A-D532-446E-8502-DEC3980926F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
