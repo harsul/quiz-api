@@ -10,4 +10,3 @@ namespace QuizService.Application.Features.Answers.Commands
         public string Text { get; set; }
     }
 }
-

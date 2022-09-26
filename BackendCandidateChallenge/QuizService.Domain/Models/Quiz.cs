@@ -6,7 +6,7 @@ namespace QuizService.Domain.Models;
 
 public class Quiz
 {
-    public int Id { get; private set; }
+    public int Id { get; }
     public string Title { get; private set; }
 
     public Quiz()
@@ -30,4 +30,7 @@ public class Quiz
 
         throw exception;
     }
+
+    //TODO add method to update Title so full encapsulation could be done
+    //and add validation for that model
 }

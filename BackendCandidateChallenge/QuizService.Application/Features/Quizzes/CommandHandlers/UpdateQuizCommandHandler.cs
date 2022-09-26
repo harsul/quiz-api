@@ -22,11 +22,11 @@ namespace QuizService.Application.Features.Quizzes.CommandHandlers
         {
             var result = new OperationResult<Quiz>();
 
-            string sql = "UPDATE Quiz SET Title = @Title WHERE Id = @Id";
+            const string sqlCommand = "UPDATE Quiz SET Title = @Title WHERE Id = @Id";
 
             try
             {
-                int rowsUpdated = await _connection.ExecuteAsync(sql, new { Id = request.Id, Title = request.Title });
+                int rowsUpdated = await _connection.ExecuteAsync(sqlCommand, new { request.Id, request.Title });
 
                 if (rowsUpdated is 0)
                 {

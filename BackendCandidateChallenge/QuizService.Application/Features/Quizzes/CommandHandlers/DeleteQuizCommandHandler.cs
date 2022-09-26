@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Net;
 using Dapper;
 using MediatR;
@@ -22,11 +21,11 @@ namespace QuizService.Application.Features.Quizzes.CommandHandlers
         {
             var result = new OperationResult<Quiz>();
 
-            var sql = "DELETE FROM Quiz WHERE Id = @Id";
+            const string sqlCommand = "DELETE FROM Quiz WHERE Id = @Id";
 
             try
             {
-                int rowsDeleted = await _connection.ExecuteAsync(sql, new { Id = request.Id});
+                int rowsDeleted = await _connection.ExecuteAsync(sqlCommand, new { request.Id });
 
                 if (rowsDeleted is 0)
                 {

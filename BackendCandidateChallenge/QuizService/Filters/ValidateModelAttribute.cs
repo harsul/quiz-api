@@ -10,6 +10,8 @@ namespace QuizService.Filters;
 
 public class ValidateModelAttribute : ActionFilterAttribute
 {
+    //TODO add separate validation for the each ID in route to check if it is valid integer
+
     public override void OnActionExecuting(ActionExecutingContext context)
     {
         if (!context.ModelState.IsValid)

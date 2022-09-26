@@ -6,5 +6,6 @@ public class QuestionUpdateRequest
 {
     [Required]
     public string Text { get; set; }
+    [Required]
     public int CorrectAnswerId { get; set; }
 }

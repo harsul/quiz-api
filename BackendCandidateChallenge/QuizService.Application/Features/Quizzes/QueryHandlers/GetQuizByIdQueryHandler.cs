@@ -22,11 +22,11 @@ namespace QuizService.Application.Features.Quizzes.QueryHandlers
         {
             var result = new OperationResult<Quiz>();
 
-            const string quizSql = "SELECT * FROM Quiz WHERE Id = @Id;";
+            const string sqlCommand = "SELECT * FROM Quiz WHERE Id = @Id;";
 
             try
             {
-                var quiz = await _connection.QuerySingleAsync<Quiz>(quizSql, new { Id = request.Id });
+                var quiz = await _connection.QuerySingleAsync<Quiz>(sqlCommand, new { request.Id });
                 result.AddValue(quiz);
             }
             catch (InvalidOperationException ex)

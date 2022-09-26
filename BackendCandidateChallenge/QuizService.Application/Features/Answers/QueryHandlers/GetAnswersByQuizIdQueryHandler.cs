@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Dapper;
 using MediatR;
 using QuizService.Application.Features.Answers.Queries;
@@ -21,8 +20,9 @@ namespace QuizService.Application.Features.Answers.QueryHandlers
         {
             var result = new OperationResult<Dictionary<int, IList<Answer>>>();
 
-            const string answersSql = "SELECT a.Id, a.Text, a.QuestionId FROM Answer a INNER JOIN Question q ON a.QuestionId = q.Id WHERE q.QuizId = @QuizId;";
-            var answers = _connection.Query<Answer>(answersSql, new { QuizId = request.QuizId })
+            const string sqlCommand = "SELECT a.Id, a.Text, a.QuestionId FROM Answer a INNER JOIN Question q ON a.QuestionId = q.Id WHERE q.QuizId = @QuizId;";
+
+            var answers = _connection.Query<Answer>(sqlCommand, new { request.QuizId })
                 .Aggregate(new Dictionary<int, IList<Answer>>(), (dict, answer) =>
                 {
                     if (!dict.ContainsKey(answer.QuestionId))

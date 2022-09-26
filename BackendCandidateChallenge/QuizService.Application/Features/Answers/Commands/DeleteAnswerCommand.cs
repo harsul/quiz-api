@@ -9,4 +9,3 @@ public class DeleteAnswerCommand : IRequest<OperationResult<Answer>>
 {
     public int AnswerId { get; set; }
 }
-

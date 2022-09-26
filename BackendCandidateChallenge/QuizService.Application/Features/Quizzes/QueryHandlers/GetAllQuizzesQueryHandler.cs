@@ -21,8 +21,9 @@ namespace QuizService.Application.Features.Quizzes.QueryHandlers
         {
             var result = new OperationResult<List<Quiz>>();
 
-            const string sql = "SELECT * FROM Quiz;";
-            var quizzes = await _connection.QueryAsync<Quiz>(sql);
+            //TODO move const string in static SqlQueries class so all queries could be managed from one place
+            const string sqlCommand = "SELECT * FROM Quiz;";
+            var quizzes = await _connection.QueryAsync<Quiz>(sqlCommand);
 
             result.AddValue(quizzes.ToList());
 
@@ -30,4 +31,3 @@ namespace QuizService.Application.Features.Quizzes.QueryHandlers
         }
     }
 }
-

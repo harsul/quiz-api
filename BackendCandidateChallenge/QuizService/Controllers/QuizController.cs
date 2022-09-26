@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace QuizService.Controllers;
 
-[Route("api/quizzes")]
+[Route(ApiRoutes.BaseRoute)]
 public class QuizController : BaseController
 {
     private readonly IDbConnection _connection;
@@ -46,23 +46,27 @@ public class QuizController : BaseController
         return Ok(result.Value);
     }
 
+    //TODO in case that we don't want to show some data from database operation result
+    //we could use AutoMapper to map data transfer object that will be presented in API response
+    //this could be implemented for all Get responses
+
     // GET api/quizzes/5
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(int id)
+    [HttpGet(ApiRoutes.IdRoute)]
+    public async Task<IActionResult> Get(int quizId)
     {
         var quizResult = await _mediator
-            .Send(new GetQuizByIdQuery { Id = id });
+            .Send(new GetQuizByIdQuery { Id = quizId });
 
         if (quizResult.IsError) return HandleErrorResponse(quizResult.StatusCode, quizResult.ErrorMessage);
 
         var questionsResult = await _mediator
-            .Send(new GetQuestionsByQuizIdQuery { QuizId = id });
+            .Send(new GetQuestionsByQuizIdQuery { QuizId = quizId });
 
         if (questionsResult.Value.Count is 0)
             return Ok(quizResult.Value);
 
         var asnwersResult = await _mediator
-            .Send(new GetAnswersByQuizIdQuery { QuizId = id });
+            .Send(new GetAnswersByQuizIdQuery { QuizId = quizId });
 
         var quiz =  new QuizResponse
         {
@@ -83,8 +87,8 @@ public class QuizController : BaseController
             }),
             Links = new Dictionary<string, string>
             {
-                {"self", $"/api/quizzes/{id}"},
-                {"questions", $"/api/quizzes/{id}/questions"}
+                {"self", $"/api/quizzes/{quizId}"},
+                {"questions", $"/api/quizzes/{quizId}/questions"}
             }
         };
 
@@ -94,23 +98,23 @@ public class QuizController : BaseController
     // POST api/quizzes
     [HttpPost]
     [ValidateModel]
-    public async Task<IActionResult> Post([FromBody] QuizCreateRequest value)
+    public async Task<IActionResult> Post([FromBody] QuizCreateRequest request)
     {
         var result = await _mediator
-            .Send(request: new CreateQuizCommand { Title = value.Title });
+            .Send(request: new CreateQuizCommand { Title = request.Title });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
-            : CreatedAtAction(nameof(Get), new { id = result.Value }, null);
+            : CreatedAtAction(nameof(Get), new { quizId = result.Value }, null);
     }
 
     // PUT api/quizzes/5
-    [HttpPut("{id}")]
+    [HttpPut(ApiRoutes.IdRoute)]
     [ValidateModel]
-    public async Task<IActionResult> Put(int id, [FromBody] QuizUpdateRequest value)
+    public async Task<IActionResult> Put(int quizId, [FromBody] QuizUpdateRequest rewuest)
     {
         var result = await _mediator
-            .Send(new UpdateQuizCommand { Id = id, Title = value.Title });
+            .Send(new UpdateQuizCommand { Id = quizId, Title = rewuest.Title });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
@@ -118,11 +122,11 @@ public class QuizController : BaseController
     }
 
     // DELETE api/quizzes/5
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete(ApiRoutes.IdRoute)]
+    public async Task<IActionResult> Delete(int quizId)
     {
         var result = await _mediator
-            .Send(new DeleteQuizCommand { Id = id });
+            .Send(new DeleteQuizCommand { Id = quizId });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
@@ -131,25 +135,25 @@ public class QuizController : BaseController
 
     // POST api/quizzes/5/questions
     [HttpPost]
-    [Route("{id}/questions")]
+    [Route(ApiRoutes.Questions.BaseRoute)]
     [ValidateModel]
-    public async Task<IActionResult> PostQuestion(int id, [FromBody] QuestionCreateRequest value)
+    public async Task<IActionResult> PostQuestion(int quizId, [FromBody] QuestionCreateRequest request)
     {
         var result = await _mediator
-            .Send(new CreateQuestionCommand { QuizId = id, Text = value.Text });
+            .Send(new CreateQuestionCommand { QuizId = quizId, Text = request.Text });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
-            : Created($"/api/quizzes/{id}/questions/{result.Value}", null);
+            : Created($"/api/quizzes/{quizId}/questions/{result.Value}", null);
     }
 
     // PUT api/quizzes/5/questions/6
-    [HttpPut("{id}/questions/{qid}")]
+    [HttpPut(ApiRoutes.Questions.IdRoute)]
     [ValidateModel]
-    public async Task<IActionResult> PutQuestion(int id, int qid, [FromBody] QuestionUpdateRequest value)
+    public async Task<IActionResult> PutQuestion(int quizId, int questionId, [FromBody] QuestionUpdateRequest request)
     {
         var result = await _mediator
-            .Send(new UpdateQuestionCommand { QuestionId = qid, Text = value.Text, CorrectAnswerId = value.CorrectAnswerId });
+            .Send(new UpdateQuestionCommand { QuestionId = questionId, Text = request.Text, CorrectAnswerId = request.CorrectAnswerId });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
@@ -158,11 +162,11 @@ public class QuizController : BaseController
 
     // DELETE api/quizzes/5/questions/6
     [HttpDelete]
-    [Route("{id}/questions/{qid}")]
-    public async Task<IActionResult> DeleteQuestion(int id, int qid)
+    [Route(ApiRoutes.Questions.IdRoute)]
+    public async Task<IActionResult> DeleteQuestion(int quizId, int questionId)
     {
         var result = await _mediator
-            .Send(new DeleteQuestionCommand { QuestionId = qid });
+            .Send(new DeleteQuestionCommand { QuestionId = questionId });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
@@ -171,25 +175,25 @@ public class QuizController : BaseController
 
     // POST api/quizzes/5/questions/6/answers
     [HttpPost]
-    [Route("{id}/questions/{qid}/answers")]
+    [Route(ApiRoutes.Answers.BaseRoute)]
     [ValidateModel]
-    public async Task<IActionResult> PostAnswer(int id, int qid, [FromBody] AnswerCreateRequest value)
+    public async Task<IActionResult> PostAnswer(int quizId, int questionId, [FromBody] AnswerCreateRequest request)
     {
         var result = await _mediator
-            .Send(new CreateAnswerCommand { QuestionId = qid, Text = value.Text });
+            .Send(new CreateAnswerCommand { QuestionId = questionId, Text = request.Text });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
-            : Created($"/api/quizzes/{id}/questions/{qid}/answers/{result.Value}", null);
+            : Created($"/api/quizzes/{quizId}/questions/{questionId}/answers/{result.Value}", null);
     }
 
     // PUT api/quizzes/5/questions/6/answers/7
-    [HttpPut("{id}/questions/{qid}/answers/{aid}")]
+    [HttpPut(ApiRoutes.Answers.IdRoute)]
     [ValidateModel]
-    public async Task<IActionResult> PutAnswer(int id, int qid, int aid, [FromBody] AnswerUpdateRequest value)
+    public async Task<IActionResult> PutAnswer(int quizId, int questionId, int answerId, [FromBody] AnswerUpdateRequest request)
     {
         var result = await _mediator
-            .Send(new UpdateAnswerCommand { AnswerId = aid, Text = value.Text });
+            .Send(new UpdateAnswerCommand { AnswerId = answerId, Text = request.Text });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)
@@ -198,11 +202,11 @@ public class QuizController : BaseController
 
     // DELETE api/quizzes/5/questions/6/answers/7
     [HttpDelete]
-    [Route("{id}/questions/{qid}/answers/{aid}")]
-    public async Task<IActionResult> DeleteAnswer(int id, int qid, int aid)
+    [Route(ApiRoutes.Answers.IdRoute)]
+    public async Task<IActionResult> DeleteAnswer(int quizId, int questionId, int answerId)
     {
         var result = await _mediator
-             .Send(new DeleteAnswerCommand { AnswerId = aid });
+             .Send(new DeleteAnswerCommand { AnswerId = answerId });
 
         return result.IsError
             ? HandleErrorResponse(result.StatusCode, result.ErrorMessage)

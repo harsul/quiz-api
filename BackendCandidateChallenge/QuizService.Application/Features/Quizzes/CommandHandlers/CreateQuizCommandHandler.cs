@@ -21,7 +21,6 @@ namespace QuizService.Application.Features.Quizzes.CommandHandlers
         public async Task<OperationResult<int>> Handle(CreateQuizCommand request, CancellationToken cancellationToken)
         {
             var result = new OperationResult<int>();
-
             var quiz = Quiz.CreateQuiz(request.Title);
             var sqlCommand = $"INSERT INTO Quiz (Title) VALUES('{quiz.Title}'); SELECT LAST_INSERT_ROWID();";
 
@@ -39,4 +38,3 @@ namespace QuizService.Application.Features.Quizzes.CommandHandlers
         }
     }
 }
-

@@ -26,10 +26,10 @@ namespace QuizService.Application.Features.Answers.CommandHandlers
             var answer = Answer.CreateAnswer(request.QuestionId, request.Text);
 
             const string sqlCommand = "INSERT INTO Answer (Text, QuestionId) VALUES(@Text, @QuestionId); SELECT LAST_INSERT_ROWID();";
-           
+
             try
             {
-                var answerId = await _connection.ExecuteScalarAsync(sqlCommand, new { Text = answer.Text, QuestionId = answer.QuestionId });
+                var answerId = await _connection.ExecuteScalarAsync(sqlCommand, new { answer.Text, answer.QuestionId });
                 result.AddValue((int)Convert.ToInt64(answerId));
             }
             catch (Exception ex)
@@ -41,4 +41,3 @@ namespace QuizService.Application.Features.Answers.CommandHandlers
         }
     }
 }
-

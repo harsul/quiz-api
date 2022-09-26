@@ -24,10 +24,10 @@ public class UpdateAnswerCommandHandler : IRequestHandler<UpdateAnswerCommand, O
         var result = new OperationResult<Answer>();
 
         const string sqlCommand = "UPDATE Answer SET Text = @Text WHERE Id = @AnswerId";
-        
+
         try
         {
-            int rowsUpdated = await _connection.ExecuteAsync(sqlCommand, new { AnswerId = request.AnswerId, Text = request.Text });
+            int rowsUpdated = await _connection.ExecuteAsync(sqlCommand, new { request.AnswerId, request.Text });
 
             if (rowsUpdated is 0)
             {
@@ -42,4 +42,3 @@ public class UpdateAnswerCommandHandler : IRequestHandler<UpdateAnswerCommand, O
         return result;
     }
 }
-

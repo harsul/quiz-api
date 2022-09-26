@@ -20,9 +20,9 @@ namespace QuizService.Application.Features.Questions.QueryHandlers
         public async Task<OperationResult<List<Question>>> Handle(GetQuestionsByQuizIdQuery request, CancellationToken cancellationToken)
         {
             var result = new OperationResult<List<Question>>();
+            const string sqlCommand = "SELECT * FROM Question WHERE QuizId = @QuizId;";
 
-            const string questionsSql = "SELECT * FROM Question WHERE QuizId = @QuizId;";
-            var questions = await _connection.QueryAsync<Question>(questionsSql, new { QuizId = request.QuizId });
+            var questions = await _connection.QueryAsync<Question>(sqlCommand, new { request.QuizId });
 
             result.AddValue(questions.ToList());
 

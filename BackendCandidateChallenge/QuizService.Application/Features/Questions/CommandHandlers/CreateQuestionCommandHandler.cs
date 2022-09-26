@@ -29,7 +29,7 @@ namespace QuizService.Application.Features.Questions.CommandHandlers
             try
             {
                 var questionId = await _connection
-                    .ExecuteScalarAsync(sqlCommand, new { Text = question.Text, QuizId = question.QuizId });
+                    .ExecuteScalarAsync(sqlCommand, new { question.Text, question.QuizId });
 
                 result.AddValue((int)Convert.ToInt64(questionId));
             }

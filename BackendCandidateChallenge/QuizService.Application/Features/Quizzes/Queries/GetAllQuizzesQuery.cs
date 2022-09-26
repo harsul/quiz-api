@@ -8,4 +8,3 @@ namespace QuizService.Application.Features.Quizzes.Queries;
 public class GetAllQuizzesQuery : IRequest<OperationResult<List<Quiz>>>
 {
 }
-

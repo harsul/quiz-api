@@ -1,10 +1,8 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Dapper;
 using System.Net;
 using MediatR;
 using QuizService.Application.Features.Questions.Commands;
-using QuizService.Application.Features.Quizzes.Commands;
 using QuizService.Application.Models;
 using QuizService.Domain.Models;
 
@@ -27,7 +25,7 @@ public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionComman
 
         try
         {
-            int rowsDeleted = await _connection.ExecuteAsync(sqlCommand, new { QuestionId = request.QuestionId });
+            int rowsDeleted = await _connection.ExecuteAsync(sqlCommand, new { request.QuestionId });
 
             if (rowsDeleted is 0)
             {

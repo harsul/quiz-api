@@ -10,4 +10,3 @@ namespace QuizService.Application.Features.Questions.Queries
         public int QuizId { get; set; }
     }
 }
-

@@ -54,7 +54,7 @@ public class QuizClient
             new Response<Uri>(response.StatusCode, response.Headers.Location) :
             new Response<Uri>(response.StatusCode, null, await ReadErrorAsync(response));
     }
-		
+
     public async Task<Response<Uri>> PostAnswerAsync(int quizId, int questionId, Answer answer, CancellationToken cancellationToken)
     {
         var request =

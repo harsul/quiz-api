@@ -1,12 +1,10 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Dapper;
 using System.Net;
 using MediatR;
 using QuizService.Application.Features.Questions.Commands;
 using QuizService.Application.Models;
 using QuizService.Domain.Models;
-using System.Security.Cryptography;
 
 namespace QuizService.Application.Features.Questions.CommandHandlers;
 
@@ -23,13 +21,13 @@ public class UpdateQuestionCommandHandler : IRequestHandler<UpdateQuestionComman
     {
         var result = new OperationResult<Question>();
 
-        var sqlCommand = "UPDATE Question SET Text = @Text, CorrectAnswerId = @CorrectAnswerId WHERE Id = @QuestionId";
-       
+        const string sqlCommand = "UPDATE Question SET Text = @Text, CorrectAnswerId = @CorrectAnswerId WHERE Id = @QuestionId";
+
         try
         {
             int rowsUpdated = await _connection
                 .ExecuteAsync(sqlCommand,
-                    new { QuestionId = request.QuestionId, Text = request.Text, CorrectAnswerId = request.CorrectAnswerId });
+                    new { request.QuestionId, request.Text, request.CorrectAnswerId });
 
             if (rowsUpdated is 0)
             {

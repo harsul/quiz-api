@@ -20,35 +20,31 @@ public class QuizzesControllerTest
     [Fact]
     public async Task PostNewQuizAddsQuiz()
     {
-        var quiz = new QuizCreateRequest {Title = "Test title" };
-        using (var testHost = new TestServer(new WebHostBuilder()
-                   .UseStartup<Startup>()))
-        {
-            var client = testHost.CreateClient();
-            var content = new StringContent(JsonConvert.SerializeObject(quiz));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var response = await client.PostAsync(new Uri(testHost.BaseAddress, $"{QuizApiEndPoint}"),
-                content);
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-            Assert.NotNull(response.Headers.Location);
-        }
+        var quiz = new QuizCreateRequest { Title = "Test title" };
+        using var testHost = new TestServer(new WebHostBuilder()
+                   .UseStartup<Startup>());
+        var client = testHost.CreateClient();
+        var content = new StringContent(JsonConvert.SerializeObject(quiz));
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        var response = await client.PostAsync(new Uri(testHost.BaseAddress, QuizApiEndPoint),
+            content);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.NotNull(response.Headers.Location);
     }
 
     [Fact]
     public async Task AQuizExistGetReturnsQuiz()
     {
-        using (var testHost = new TestServer(new WebHostBuilder()
-                   .UseStartup<Startup>()))
-        {
-            var client = testHost.CreateClient();
-            const long quizId = 1;
-            var response = await client.GetAsync(new Uri(testHost.BaseAddress, $"{QuizApiEndPoint}{quizId}"));
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(response.Content);
-            var quiz = JsonConvert.DeserializeObject<QuizResponse>(await response.Content.ReadAsStringAsync());
-            Assert.Equal(quizId, quiz.Id);
-            Assert.Equal("My first quiz", quiz.Title);
-        }
+        using var testHost = new TestServer(new WebHostBuilder()
+                   .UseStartup<Startup>());
+        var client = testHost.CreateClient();
+        const long quizId = 1;
+        var response = await client.GetAsync(new Uri(testHost.BaseAddress, $"{QuizApiEndPoint}{quizId}"));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(response.Content);
+        var quiz = JsonConvert.DeserializeObject<QuizResponse>(await response.Content.ReadAsStringAsync());
+        Assert.Equal(quizId, quiz.Id);
+        Assert.Equal("My first quiz", quiz.Title);
     }
 
     [Fact]
@@ -67,18 +63,16 @@ public class QuizzesControllerTest
     [Fact]
     public async Task AQuizDoesNotExists_WhenPostingAQuestion_ReturnsNotFound()
     {
-        const string QuizApiEndPoint = "/api/quizzes/999/questions";
+        const long quizId = 999;
+        string QuizApiEndPoint = $"/api/quizzes/{quizId}/questions";
 
-        using (var testHost = new TestServer(new WebHostBuilder()
-                   .UseStartup<Startup>()))
-        {
-            var client = testHost.CreateClient();
-            const long quizId = 999;
-            var question = new QuestionCreateRequest{Text = "The answer to everything is what?"};
-            var content = new StringContent(JsonConvert.SerializeObject(question));
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            var response = await client.PostAsync(new Uri(testHost.BaseAddress, $"{QuizApiEndPoint}"),content);
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        }
+        using var testHost = new TestServer(new WebHostBuilder()
+                   .UseStartup<Startup>());
+        var client = testHost.CreateClient();
+        var question = new QuestionCreateRequest { Text = "The answer to everything is what?" };
+        var content = new StringContent(JsonConvert.SerializeObject(question));
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        var response = await client.PostAsync(new Uri(testHost.BaseAddress, QuizApiEndPoint), content);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

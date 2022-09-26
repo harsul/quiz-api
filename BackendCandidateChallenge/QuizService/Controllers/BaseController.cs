@@ -17,6 +17,7 @@ public class BaseController : ControllerBase
 
         errorResponse.ErrorMessages.Add(error);
 
+        //TODO add more status code cases
         return code switch
         {
             HttpStatusCode.NotFound => NotFound(errorResponse),

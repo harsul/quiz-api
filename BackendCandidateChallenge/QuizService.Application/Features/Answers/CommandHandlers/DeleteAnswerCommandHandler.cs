@@ -26,7 +26,7 @@ public class DeleteAnswerCommandHandler : IRequestHandler<DeleteAnswerCommand, O
 
         try
         {
-            int rowsDeleted = await _connection.ExecuteAsync(sqlCommand, new { AnswerId = request.AnswerId });
+            int rowsDeleted = await _connection.ExecuteAsync(sqlCommand, new { request.AnswerId });
 
             if (rowsDeleted is 0)
             {
@@ -41,4 +41,3 @@ public class DeleteAnswerCommandHandler : IRequestHandler<DeleteAnswerCommand, O
         return result;
     }
 }
-
